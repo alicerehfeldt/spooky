@@ -56,11 +56,6 @@ sfx.set_volume(1)
 def playChime():
   sfx.play()
 
-def playMusic():
-  mixer.music.load("purikuraloop.ogg")
-  mixer.music.set_volume(.2)
-  mixer.music.play(-1)
-
 def attractMode():
   buttonOn()
 
@@ -262,8 +257,6 @@ def done():
 
 if __name__ == "__main__":
   try:
-    if musicOn:
-      playMusic()
     attractMode()
   except KeyboardInterrupt:
     done()
