@@ -97,15 +97,17 @@ def takePhoto():
 
 def photoMode:
   pilImage = takePhoto()
+  screenImage = pilImage.resize(1000, 1500)
 
+  mode = screenImage.mode
+  size = screenImage.size
+  data = screenImage.tostring()
   pygameImage = pygame.image.fromstring(data, size, mode)
-  mode = pilImage.mode
-  size = pilImage.size
-  data = pilImage.tostring()
+
 
   # display photo on screen
   screen.fill(black)
-  screen.blit(pygameImage, (0,0))
+  screen.blit(pygameImage, (40,0))
   screen.blit(printlogo, (0, 1800))
   pygame.display.update()
 
@@ -134,7 +136,6 @@ def attractMode:
   screen.fill(black)
   screen.blit(takelogo, (0, 1800))
   pygame.display.update()
-
   while True:
     checkForQuit()
     input_state = GPIO.input(18)
