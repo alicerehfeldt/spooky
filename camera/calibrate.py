@@ -9,6 +9,7 @@ import sys
 from PIL import Image
 
 white = pygame.Color(255,255,255)
+black = pygame.Color(0,0,0)
 
 pygame.init()
 
@@ -30,7 +31,7 @@ camera.awb_mode = 'fluorescent'
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 GPIO.setup(4, GPIO.OUT, initial=GPIO.HIGH)
-options = {'fullscreen':False, 'window': (415,0,400,600)}
+options = {'fullscreen':False, 'window': (40,210,1000,1500)}
 camera.start_preview(**options)
 camera.hflip = True
 
