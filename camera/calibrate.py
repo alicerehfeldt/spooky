@@ -5,6 +5,7 @@ import pygame
 import time
 import io
 import RPi.GPIO as GPIO
+import sys
 from PIL import Image
 
 white = pygame.Color(255,255,255)
@@ -23,13 +24,13 @@ GPIO.setmode(GPIO.BCM)
 
 
 camera = picamera.PiCamera();
-camera.resolution = (552,736)
+camera.resolution = (1200,1800)
 camera.awb_mode = 'fluorescent'
 
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 GPIO.setup(4, GPIO.OUT, initial=GPIO.HIGH)
-options = {'fullscreen':False, 'window': (415,0,450,720)}
+options = {'fullscreen':False, 'window': (415,0,400,600)}
 camera.start_preview(**options)
 camera.hflip = True
 
