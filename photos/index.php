@@ -26,6 +26,7 @@ foreach ($files as $file) {
 HTML;
         }
       ?>
+      <pre><?php print_r($images); ?></pre>
     </body>
 
 </html>
