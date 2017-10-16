@@ -16,6 +16,15 @@ foreach ($files as $file) {
         <title>Alice's Spooky Party</title>
         <meta http-equiv="refresh" content="10"/>
         <style>
+          div.photo {
+            width: 600px;
+            text-align: center;
+            margin: 0px auto 40px;
+          }
+          div.photo img {
+              width: 600px;
+              height: 400px;
+          }
         </style>
     </head>
     <body>
