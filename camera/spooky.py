@@ -52,11 +52,20 @@ def startPreview():
   camera.start_preview(**options)
   camera.hflip = True
 
-def checkForQuit():
+def checkForInput():
+  input_state = GPIO.input(18)
+  if input_state == False:
+    return true
+
   for event in pygame.event.get():
-    if (event.type == pygame.QUIT or 
+    if (event.type == pygame.K_SPACE):
+      return true
+    elif (event.type == pygame.QUIT or 
       (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)):
       done()
+      return false
+
+  return false
 
 def done():
   pygame.quit()
@@ -115,9 +124,7 @@ def photoMode:
   printEnd = printStart + 10
 
   while True:
-    checkForQuit()
-    input_state = GPIO.input(18)
-    if input_state == False:
+    if checkForInput():
       # save photo
       filename = photoNum() + '.jpg'
       filepath = '/home/pi/spooky/photos' + filename
@@ -137,9 +144,7 @@ def attractMode:
   screen.blit(takelogo, (0, 1800))
   pygame.display.update()
   while True:
-    checkForQuit()
-    input_state = GPIO.input(18)
-    if input_state == False:
+    if checkForInput():
       photoMode()
 
 
