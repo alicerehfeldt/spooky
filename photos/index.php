@@ -14,6 +14,9 @@ foreach ($files as $file) {
 <html>
     <head>
         <title>Alice's Spooky Party</title>
+        <meta http-equiv="refresh" content="10"/>
+        <style>
+        </style>
     </head>
     <body>
       <?php
