@@ -1,6 +1,6 @@
 <?php
 
-$images = new Array();
+$images = array();
 $files = scandir('.', SCANDIR_SORT_DESCENDING);
 foreach ($files as $file) {
   if (preg_match('@\.jpg$@', $file)) {
