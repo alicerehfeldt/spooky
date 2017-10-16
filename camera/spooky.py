@@ -3,6 +3,8 @@
 import picamera
 import pygame
 import time
+import math
+import random
 import io
 import RPi.GPIO as GPIO
 import sys
@@ -29,16 +31,18 @@ camera.awb_mode = 'fluorescent'
 
 GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-photoCount = 0
-
+countFile = open('count.txt')
+photoCount = int(countFile.readline())
+countFile.close()
 def photoNum():
-  photoCount++;
+  global photoCount
+  photoCount = photoCount + 1;
   if (photoCount < 10):
-    return '000'+photoCount
+    return '000' + str(photoCount)
   elif (photoCount < 100):
-    return '00'+photoCount
+    return '00'+ str(photoCount)
   elif (photoCount < 1000):
-    return '0' + photoCount
+    return '0' + str(photoCount)
 
 # countdown images
 one = pygame.image.load("images/1.png")
@@ -46,6 +50,7 @@ two = pygame.image.load("images/2.png")
 three = pygame.image.load("images/3.png")
 printlogo = pygame.image.load("images/printphoto.png")
 takelogo = pygame.image.load("images/takephoto.png")
+printing = pygame.image.load("images/printing.png")
 
 def startPreview():
   options = {'fullscreen':False, 'window': (40,0,1000,1500)}
@@ -55,29 +60,31 @@ def startPreview():
 def checkForInput():
   input_state = GPIO.input(18)
   if input_state == False:
-    return true
+    return True
 
   for event in pygame.event.get():
-    if (event.type == pygame.K_SPACE):
-      return true
+    if (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+      return True
     elif (event.type == pygame.QUIT or 
       (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE)):
       done()
-      return false
-
-  return false
+      return False
+  return False
 
 def done():
+  countFile = open("count.txt", "w")
+  countFile.truncate(0)
+  countFile.write(str(photoCount))
+  countFile.close()
   pygame.quit()
   sys.exit()
 
 
 def oneSecondNumber(num):
   screen.fill(black)
-  screen.blit(num, (400, 1820))
+  screen.blit(num, (450, 1500))
   pygame.display.update()
-  time.sleep(3)
-  screen.fill(white)
+  time.sleep(1)
   pygame.display.update()
 
 def takePhoto():
@@ -90,34 +97,27 @@ def takePhoto():
   stream = io.BytesIO()
   photoOptions = {'quality':95}
   camera.capture(stream, "jpeg", **photoOptions)
-
   stream.seek(0);
-  playChime()
 
   pilImage = Image.open(stream)
-
-  mode = pilImage.mode
-  size = pilImage.size
-  data = pilImage.tostring()
-
-
   return pilImage
 
 
-def photoMode:
+def photoMode():
   pilImage = takePhoto()
-  screenImage = pilImage.resize(1000, 1500)
+  screen.fill(black)
+  pygame.display.update()
+  screenImage = pilImage.resize((1000, 1500), Image.BICUBIC)
 
   mode = screenImage.mode
   size = screenImage.size
-  data = screenImage.tostring()
+  data = screenImage.tobytes()
   pygameImage = pygame.image.fromstring(data, size, mode)
-
 
   # display photo on screen
   screen.fill(black)
   screen.blit(pygameImage, (40,0))
-  screen.blit(printlogo, (0, 1800))
+  screen.blit(printlogo, (0, 1600))
   pygame.display.update()
 
   printStart = time.time()
@@ -127,27 +127,38 @@ def photoMode:
     if checkForInput():
       # save photo
       filename = photoNum() + '.jpg'
-      filepath = '/home/pi/spooky/photos' + filename
+      filepath = '/home/pi/spooky/photos/' + filename
       pilImage.save(filepath, "jpeg")
 
-
       # print photo
-      print "WOULD BE PRINTING HERE"
-
+      screen.fill(black)
+      screen.blit(pygameImage, (40,0))
+      screen.blit(printing, (0, 1600))
+      pygame.display.update()
+      time.sleep(5)
       return
     elif time.time() > printEnd:
       return
 
-def attractMode:
-  startPreview()
+def drawAttractMode():
+  vmin = 1500
+  vrand = math.floor(random.random() * 200)
+  vfinal = vmin + vrand
   screen.fill(black)
-  screen.blit(takelogo, (0, 1800))
+  screen.blit(takelogo, (0, vfinal))
   pygame.display.update()
+ 
+
+def attractMode():
+  startPreview()
+  changeTime = 0
   while True:
     if checkForInput():
       photoMode()
-
-
+      startPreview()
+    elif changeTime < time.time():
+      drawAttractMode()
+      changeTime = time.time() + 5
 
 while True:
   attractMode()
